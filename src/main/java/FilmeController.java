@@ -1,7 +1,9 @@
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -10,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class App {
+public class FilmeController {
     public static void main(String[] args) throws Exception {
 
         //System.out.println("Hello, World!");
@@ -35,10 +37,19 @@ public class App {
         JsonNode jsonNode = objectMapper.readTree(body);
 
         //exibir e manipular os dados
+        FigurinhaController figurinhaController = new FigurinhaController();
         for (JsonNode node : jsonNode.get("items")) {
-            System.out.println(node.get("title").asText());
-            System.out.println(node.get("image").asText());
-            System.out.println(node.get("imDbRating").asText());
+            String imagem = node.get("image").asText();
+            String titulo = node.get("title").asText().replaceAll(":", "");
+            String rating = node.get("imDbRating").asText();
+
+            InputStream inputStream = new URL(imagem).openStream();
+            String nomeArquivo = titulo + ".png";
+            figurinhaController.criar(inputStream, nomeArquivo);
+
+            System.out.println(titulo);
+            //System.out.println(imagem);
+            //System.out.println(rating);
             System.out.println();
         }
     }
